@@ -1,0 +1,7 @@
+spring:
+  liquibase:
+    enabled: true
+liquibase:
+  # Run spring liquibase in apply and exit on application ready mode (apply missing change sets, exit the application on application ready event).
+  checkUpdateOnly: false
+  exitOnApplicationReady: true
