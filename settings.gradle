@@ -1,0 +1,5 @@
+rootProject.name = "calendly"
+include("calendly-common")
+include("calendly-api")
+include 'config'
+

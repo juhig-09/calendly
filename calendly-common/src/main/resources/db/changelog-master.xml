@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+        <databaseChangeLog
+xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+
+  <!-- Table: users -->
+  <changeSet id="1" author="Juhi">
+        <createTable tableName="users">
+        <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+        </column>
+      <column name="name" type="varchar(255)">
+        <constraints nullable="false"/>
+        </column>
+      <column name="email" type="varchar(255)">
+        <constraints nullable="false" unique="true"/>
+        </column>
+      <column name="profile" type="varchar(255)">
+        <constraints nullable="false"/>
+        </column>
+      <column name="timezone" type="varchar(255)">
+        <constraints nullable="false"/>
+        </column>
+      <column name="created_at" type="timestamp">
+        <constraints nullable="false"/>
+        </column>
+      <column name="last_modified_at" type="timestamp">
+        <constraints nullable="false"/>
+        </column>
+      <column name="is_deleted" type="bool">
+        <constraints nullable="false"/>
+        </column>
+    </createTable>
+        </changeSet>
+
+  <!-- Table: schedules -->
+  <changeSet id="2" author="Juhi">
+    <createTable tableName="schedules">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="email" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="date" type="date">
+        <constraints nullable="false"/>
+      </column>
+      <column name="available_times" type="JSONB">
+        <constraints nullable="false"/>
+      </column>
+      <column name="timezone" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="created_at" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="last_modified_at" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="is_deleted" type="bool">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+    <!-- Foreign key: schedules.email references user.email -->
+    <addForeignKeyConstraint baseTableName="schedules"
+      baseColumnNames="email"
+      referencedTableName="users"
+      referencedColumnNames="email"
+      constraintName="fk_schedules_user"/>
+    <addUniqueConstraint columnNames="email, date"  tableName="schedules"/>
+  </changeSet>
+
+  <!-- Table: meetings -->
+  <changeSet id="3" author="Juhi">
+    <createTable tableName="meetings">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+        </column>
+      <column name="title" type="varchar(255)">
+        <constraints nullable="false"/>
+        </column>
+      <column name="description" type="text"/>
+      <column name="timezone" type="varchar(255)">
+        <constraints nullable="false"/>
+        </column>
+      <column name="date" type="date">
+        <constraints nullable="false"/>
+        </column>
+      <column name="start_time" type="time">
+        <constraints nullable="false"/>
+        </column>
+      <column name="end_time" type="time">
+        <constraints nullable="false"/>
+        </column>
+      <column name="status" type="varchar(255)">
+        <constraints nullable="false"/>
+        </column>
+      <column name="link" type="varchar(255)">
+        <constraints nullable="false"/>
+        </column>
+      <column name="meeting_type" type="varchar(255)">
+        <constraints nullable="false"/>
+        </column>
+      <column name="optional_invitees" type="varchar(255)">
+        <constraints nullable="false"/>
+        </column>
+      <column name="required_invitees" type="varchar(255)">
+        <constraints nullable="false"/>
+        </column>
+      <column name="created_by_user_email" type="varchar(255)">
+        <constraints nullable="false"/>
+        </column>
+      <column name="created_at" type="timestamp">
+        <constraints nullable="false"/>
+        </column>
+      <column name="last_modified_at" type="timestamp">
+        <constraints nullable="false"/>
+        </column>
+    </createTable>
+    <!-- Foreign key: meetings.created_by_user_email references users.email -->
+    <addForeignKeyConstraint baseTableName="meetings"
+                             baseColumnNames="created_by_user_email"
+                             referencedTableName="users"
+                             referencedColumnNames="email"
+                             constraintName="fk_meetings_users"/>
+        </changeSet>
+
+  <!-- Table: userMeetings -->
+  <changeSet id="4" author="Juhi">
+    <createTable tableName="user_meetings">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+        </column>
+      <column name="user_email" type="varchar(255)">
+        <constraints nullable="false"/>
+        </column>
+      <column name="meeting_id" type="bigint">
+        <constraints nullable="false"/>
+        </column>
+      <column name="user_status" type="varchar(255)">
+        <constraints nullable="false"/>
+        </column>
+    </createTable>
+        <!-- Foreign key: user_meetings.user_email references users.email -->
+        <addForeignKeyConstraint baseTableName="user_meetings"
+baseColumnNames="user_email"
+referencedTableName="users"
+referencedColumnNames="email"
+constraintName="fk_user_meetings_users"/>
+        <!-- Foreign key: user_meetings.meeting_id references meetings.id -->
+        <addForeignKeyConstraint baseTableName="user_meetings"
+baseColumnNames="meeting_id"
+referencedTableName="meetings"
+referencedColumnNames="id"
+constraintName="fk_user_meetings_meetings"/>
+        </changeSet>
+
+</databaseChangeLog>

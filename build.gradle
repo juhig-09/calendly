@@ -1,0 +1,66 @@
+plugins {
+    id 'org.springframework.boot' version '3.3.0' apply false
+    id 'com.gorylenko.gradle-git-properties' version '2.4.1' apply false
+    id 'io.spring.dependency-management' version '1.1.5' apply false
+    id 'io.freefair.lombok' version '8.6' apply false
+    id 'io.freefair.aggregate-javadoc' version '8.6'
+    id 'org.liquibase.gradle' version '2.1.1'
+}
+
+allprojects {
+    repositories {
+        mavenCentral() // This ensures that all projects, including subprojects, can fetch dependencies
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'io.freefair.lombok'
+
+    group = 'calendly'
+    version = '1.0.0'
+
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+
+    tasks.withType(JavaCompile) {
+        options.compilerArgs.add('-parameters')
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom 'org.springframework.boot:spring-boot-dependencies:3.3.0'
+        }
+        dependencies {
+            dependency 'org.projectlombok:lombok:1.18.32'
+            dependency "org.liquibase:liquibase-groovy-dsl:3.0.0"
+            dependency 'org.projectlombok:lombok:1.18.32'
+            dependency "org.projectlombok:lombok-mapstruct-binding:0.2.0"
+            // Documentation Generation
+            dependency 'io.swagger.core.v3:swagger-annotations:2.2.22'
+            dependencySet(group: 'org.springdoc', version: '2.5.0') {
+                entry('springdoc-openapi-starter-webmvc-ui')
+            }
+            //Spring boot admin
+            dependency 'de.codecentric:spring-boot-admin-starter-client:3.2.3'
+        }
+    }
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+        implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
+        implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+        implementation 'org.glassfish:jakarta.el:4.0.2'
+        implementation 'com.vladmihalcea:hibernate-types-60:2.21.1'
+    }
+}
+
+tasks.register('runAllServices') {
+    dependsOn(
+            build,
+            ':calendly-api:bootRun'
+    )
+    doLast {
+        println("All services started.")
+    }
+}

@@ -1,0 +1,69 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  server:
+    port: 8383
+  zipkin:
+    enabled: false
+health:
+  vault:
+    enabled: false
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: calendly-api
+  boot:
+    admin:
+      client:
+        url: http://localhost:8181
+        instance:
+          service-url: http://localhost:${server.port}
+          health-url: http://localhost:${management.server.port}/actuator/health
+          management-url: http://localhost:${management.server.port}/actuator
+          metadata:
+            tags:
+              environment: dev
+        auto-registration: true
+  datasource:
+    hikari:
+      connectionInitSql: SELECT 1
+      connectionTimeout: 15000
+      leakDetectionThreshold: 60000
+      maximumPoolSize: ${SPRING_DATASOURCE_TOMCAT_MAX_ACTIVE:75}
+      minimumIdle: 10
+      password: password
+      registerMbeans: true
+      username: user
+    url: jdbc:postgresql://localhost:5432/postgres
+  liquibase:
+    change-log: db/changelog-master.xml
+  jackson:
+    default-property-inclusion: non_null
+
+calendly:
+  environment: dev
+  application:
+    name: ${spring.application.name}
+liquibase:
+  checkUpdateOnly: true
+  exitOnApplicationReady: true
+
+server:
+  port: 8080
+
+## ------------------------
+## Swagger
+## ------------------------
+springdoc:
+  api-docs:
+    resolve-schema-properties: true
+    path: /v3/api-docs
+  swagger-ui:
+    operations-sorter: method
+    path: /swagger-ui.html
+    url: ${springdoc.api-docs.path}
+    config-url: ${springdoc.api-docs.path}/swagger-config
+    disable-swagger-default-url: true
