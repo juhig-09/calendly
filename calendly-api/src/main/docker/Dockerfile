@@ -1,14 +1,21 @@
-# Use official PostgreSQL image from Docker Hub
-FROM postgres:latest
+FROM openjdk:17-jdk-slim
 
-# Set environment variables for PostgreSQL setup
+# Set the working directory for the API
+WORKDIR /app
+
+# Copy the application JAR file (assuming the JAR is already built)
+COPY calendly-api/build/libs/calendly-api-1.0.0.jar app.jar
+
+# Set environment variables for PostgreSQL connection
 ENV POSTGRES_USER=user
 ENV POSTGRES_PASSWORD=password
 ENV POSTGRES_DB=postgres
+ENV POSTGRES_HOST=localhost
+ENV POSTGRES_PORT=5432
 
-# Copy initialization scripts to container
-# These scripts will be run when the container is initialized
-COPY ./init.sql /docker-entrypoint-initdb.d/
+# Expose port for the API
+EXPOSE 8080
 
-# Expose port 5432 for PostgreSQL
-EXPOSE 5432
+# Command to run the API
+CMD ["java", "-jar", "app.jar"]
+
