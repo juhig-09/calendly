@@ -1,3 +1,10 @@
+## Verify the project
+1. Clone the repo 
+2. Ensure docker is installed
+3. Run ```docker compose up```
+
+This will run all the required service in docker. Access the service endpoints by Hit the Swagger UI and run the Controller there: http://localhost:8080/swagger-ui/index.html
+
 ## Build the project
 
 Note some limitations:
