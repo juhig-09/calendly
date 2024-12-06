@@ -17,11 +17,13 @@ public class LiquibaseConfig {
   @Value("${spring.liquibase.changelog}")
   private String liquibaseChangelog;
 
+  @Value("${spring.datasource.url}")
+  private String url;
+
   @Bean
   public DataSource dataSource() {
     final HikariConfig hikariConfig = new HikariConfig();
-    hikariConfig.setJdbcUrl(
-        "jdbc:postgresql://localhost:5432/postgres");
+    hikariConfig.setJdbcUrl(url);
     hikariConfig.setUsername("user");
     hikariConfig.setPassword("password");
     hikariConfig.setDriverClassName("org.postgresql.Driver");
