@@ -1,9 +1,45 @@
-version: '3'
+version: "3.8"
 services:
-  db:
+  postgres:
     image: postgres:latest
+    container_name: postgres
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+      POSTGRES_HOST: postgres
     ports:
       - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U user -d postgres -h postgres" ]
+      interval: 10s
+      retries: 5
+      start_period: 50s
+      timeout: 5s
+    networks:
+      - backend
+
+  calendly-api:
+    build:
+      context: .
+      dockerfile: ./calendly-api/src/main/docker/Dockerfile
+    container_name: calendly-api
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres  # Use service name `postgres` as the host
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+      POSTGRES_DB: postgres
+      POSTGRES_HOST: postgres # Connecting to the 'postgres' service
+      POSTGRES_PORT: 5432
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge

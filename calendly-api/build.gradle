@@ -21,7 +21,7 @@ classes.dependsOn bootBuildInfo
 
 bootRun {
     systemProperty 'application.name', project.name
-//    systemProperty "spring.profiles.active", "dev"
+    systemProperty "spring.profiles.active", "local"
 }
 
 artifacts {
@@ -49,7 +49,7 @@ tasks.register('runLiquibase') {
     dependsOn build
     doLast {
         group "application"
-        tasks.run.environment("SPRING_PROFILES_ACTIVE", "liquibase,dev")
+        tasks.run.environment("SPRING_PROFILES_ACTIVE", "liquibase,local")
         tasks.run.exec()
     }
 }
